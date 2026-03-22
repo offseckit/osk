@@ -1,6 +1,6 @@
 # >_ osk
 
-**Free offensive security toolkit for your terminal — reverse shells, encoding, hashing, JWT analysis, nmap building, XSS payloads, header security analysis, CVSS scoring, subnet calculation, and more.**
+**Free offensive security toolkit for your terminal — reverse shells, encoding, hashing, JWT analysis, nmap building, XSS payloads, header security analysis, CVSS scoring, subnet calculation, terminal output formatting, and more.**
 
 Part of [OffSecKit](https://offseckit.com) — all tools also available as [browser tools](https://offseckit.com/tools).
 
@@ -47,6 +47,9 @@ osk cvss calc CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H
 
 # Calculate subnet details
 osk subnet calc 192.168.1.0/24
+
+# Format terminal output with a styled frame
+nmap -sV 10.10.10.10 | osk format render
 ```
 
 ## Tools
@@ -62,6 +65,7 @@ osk subnet calc 192.168.1.0/24
 | `osk headers` | Analyze HTTP response headers for security misconfigurations |
 | `osk cvss` | Calculate CVSS 3.1 and 4.0 vulnerability scores |
 | `osk subnet` | Calculate subnet details, split networks, check IP containment |
+| `osk format` | Format and beautify terminal output with styled window frames |
 
 ## Reverse Shells
 
@@ -243,6 +247,25 @@ osk subnet contains 192.168.1.0/24 192.168.1.100
 osk subnet list 192.168.1.0/28
 ```
 
+## CLI Output Formatter
+
+```bash
+# Render terminal output with a styled window frame
+nmap -sV 10.10.10.10 | osk format render
+
+# Render from a file with a custom title
+osk format render -f output.txt --title "Nmap Scan Results"
+
+# Add line numbers
+cat output.log | osk format render -n --title "Server Logs"
+
+# Strip all ANSI escape codes
+cat colored-output.log | osk format strip
+
+# Get output statistics
+cat output.log | osk format stats --json
+```
+
 ## Requirements
 
 - Python 3.8+
@@ -259,6 +282,7 @@ osk subnet list 192.168.1.0/28
 - [Header Security Analyzer](https://offseckit.com/tools/headers) — browser version
 - [CVSS Calculator](https://offseckit.com/tools/cvss) — browser version
 - [Subnet Calculator](https://offseckit.com/tools/subnet) — browser version
+- [CLI Output Formatter](https://offseckit.com/tools/cli-format) — browser version
 
 ## License
 
