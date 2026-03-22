@@ -7,6 +7,7 @@ from .revshell.cmd import revshell
 from .encode.cmd import encode
 from .hash.cmd import hash
 from .jwt.cmd import jwt
+from .nmap.cmd import nmap
 
 BANNER = f"""\
 \033[32m>_\033[0m \033[1mosk\033[0m \033[90mv{__version__}\033[0m
@@ -25,6 +26,7 @@ def main():
       osk encode     Encode and decode text (Base64, URL, Hex, ...)
       osk hash       Identify and generate hashes
       osk jwt        Decode and analyze JWT tokens
+      osk nmap       Build nmap commands visually
 
     \b
     Examples:
@@ -34,6 +36,7 @@ def main():
       osk hash generate -a sha256 "password"
       osk jwt decode eyJhbGciOiJIUzI1NiIs...
       osk jwt analyze eyJhbGciOiJIUzI1NiIs...
+      osk nmap build -t 10.10.10.10 -sV --open
 
     \b
     https://offseckit.com
@@ -44,6 +47,7 @@ main.add_command(revshell)
 main.add_command(encode)
 main.add_command(hash)
 main.add_command(jwt)
+main.add_command(nmap)
 
 
 if __name__ == "__main__":
