@@ -10,6 +10,7 @@ from .jwt.cmd import jwt
 from .nmap.cmd import nmap
 from .xss.cmd import xss
 from .headers.cmd import headers
+from .cvss.cmd import cvss
 
 BANNER = f"""\
 \033[32m>_\033[0m \033[1mosk\033[0m \033[90mv{__version__}\033[0m
@@ -31,6 +32,7 @@ def main():
       osk nmap       Build nmap commands visually
       osk xss        Generate XSS payloads with WAF bypass
       osk headers    Analyze HTTP response headers for security issues
+      osk cvss       Calculate CVSS 3.1 and 4.0 vulnerability scores
 
     \b
     Examples:
@@ -44,6 +46,8 @@ def main():
       osk xss gen -c html -a alert
       osk xss gen -c attr-double --waf cloudflare
       curl -sI https://example.com | osk headers analyze
+      osk cvss calc CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H
+      osk cvss presets
 
     \b
     https://offseckit.com
@@ -57,6 +61,7 @@ main.add_command(jwt)
 main.add_command(nmap)
 main.add_command(xss)
 main.add_command(headers)
+main.add_command(cvss)
 
 
 if __name__ == "__main__":

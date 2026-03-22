@@ -1,6 +1,6 @@
 # >_ osk
 
-**Free offensive security toolkit for your terminal — reverse shells, encoding, hashing, JWT analysis, nmap building, XSS payloads, header security analysis, and more.**
+**Free offensive security toolkit for your terminal — reverse shells, encoding, hashing, JWT analysis, nmap building, XSS payloads, header security analysis, CVSS scoring, and more.**
 
 Part of [OffSecKit](https://offseckit.com) — all tools also available as [browser tools](https://offseckit.com/tools).
 
@@ -41,6 +41,9 @@ osk xss gen --context html-attr --action alert
 
 # Analyze security headers
 curl -sI https://example.com | osk headers analyze
+
+# Calculate a CVSS score
+osk cvss calc CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H
 ```
 
 ## Tools
@@ -54,6 +57,7 @@ curl -sI https://example.com | osk headers analyze
 | `osk nmap` | Build nmap commands with scan types, scripts, timing, and evasion |
 | `osk xss` | Generate context-aware XSS payloads with WAF bypass and encoding |
 | `osk headers` | Analyze HTTP response headers for security misconfigurations |
+| `osk cvss` | Calculate CVSS 3.1 and 4.0 vulnerability scores |
 
 ## Reverse Shells
 
@@ -197,6 +201,25 @@ osk headers analyze -u https://example.com --json
 osk headers list
 ```
 
+## CVSS Calculator
+
+```bash
+# Calculate CVSS 3.1 score from a vector
+osk cvss calc CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H
+
+# Calculate CVSS 4.0 score
+osk cvss calc CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N
+
+# Output as JSON for CI/CD
+osk cvss calc CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H --json
+
+# Show common vulnerability presets
+osk cvss presets
+
+# Compare two vectors
+osk cvss compare CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H CVSS:3.1/AV:N/AC:H/PR:L/UI:R/S:U/C:H/I:H/A:H
+```
+
 ## Requirements
 
 - Python 3.8+
@@ -211,6 +234,7 @@ osk headers list
 - [Nmap Builder](https://offseckit.com/tools/nmap) — browser version
 - [XSS Generator](https://offseckit.com/tools/xss) — browser version
 - [Header Security Analyzer](https://offseckit.com/tools/headers) — browser version
+- [CVSS Calculator](https://offseckit.com/tools/cvss) — browser version
 
 ## License
 
