@@ -1,6 +1,6 @@
 # >_ osk
 
-**Free offensive security toolkit for your terminal — reverse shells, encoding, hashing, and more.**
+**Free offensive security toolkit for your terminal — reverse shells, encoding, hashing, JWT analysis, nmap building, XSS payloads, and more.**
 
 Part of [OffSecKit](https://offseckit.com) — all tools also available as [browser tools](https://offseckit.com/tools).
 
@@ -30,8 +30,14 @@ osk encode -o base64-encode "Hello World"
 # Identify a hash
 osk hash id 5d41402abc4b2a76b9719d911017c592
 
-# Generate SHA-256 hash
-osk hash generate -a sha256 "password"
+# Decode a JWT token
+osk jwt decode eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+# Build an nmap command
+osk nmap build -t 10.10.10.0/24 --syn --top-ports 1000
+
+# Generate XSS payloads
+osk xss gen --context html-attr --action alert
 ```
 
 ## Tools
@@ -41,6 +47,9 @@ osk hash generate -a sha256 "password"
 | `osk revshell` | Generate reverse shell one-liners in 12+ languages |
 | `osk encode` | Encode/decode text (Base64, URL, Hex, HTML, Unicode, Binary, ROT13, ...) |
 | `osk hash` | Identify hash types and generate hashes (MD5, SHA1, SHA256, NTLM, ...) |
+| `osk jwt` | Decode and analyze JWT tokens for security issues |
+| `osk nmap` | Build nmap commands with scan types, scripts, timing, and evasion |
+| `osk xss` | Generate context-aware XSS payloads with WAF bypass and encoding |
 
 ## Reverse Shells
 
@@ -98,14 +107,6 @@ echo "secret" | osk encode -o hex-encode
 osk encode list
 ```
 
-### Options
-
-| Flag | Description |
-|------|-------------|
-| `-o, --op` | Operation to apply (repeatable, chained in order) |
-| `-i, --input` | Input text (alternative to positional arg) |
-| `-s, --steps` | Show intermediate results for chains |
-
 ## Hash Identification & Generation
 
 ```bash
@@ -118,25 +119,60 @@ osk hash generate -a md5 -a sha256 -a ntlm "password"
 # Generate all default hashes
 osk hash generate "hello"
 
-# Pipe from stdin
-echo "admin" | osk hash generate -a sha512
-
 # List supported algorithms
 osk hash list
 ```
 
-### Supported Algorithms
+## JWT Decoder & Analyzer
 
-| Algorithm | Bits |
-|-----------|------|
-| MD5 | 128 |
-| SHA-1 | 160 |
-| SHA-256 | 256 |
-| SHA-384 | 384 |
-| SHA-512 | 512 |
-| NTLM | 128 |
-| SHA3-256 | 256 |
-| SHA3-512 | 512 |
+```bash
+# Decode a JWT token
+osk jwt decode eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PlFUP0THsR8U
+
+# Analyze for security issues
+osk jwt analyze eyJhbGciOiJIUzI1NiIs...
+
+# List supported algorithms
+osk jwt algorithms
+```
+
+## Nmap Command Builder
+
+```bash
+# Quick recon scan
+osk nmap preset quick-recon -t 10.10.10.0/24
+
+# Full port SYN scan with service detection
+osk nmap build -t 10.10.10.10 --syn --all-ports --service-version
+
+# Stealth scan with evasion
+osk nmap build -t 10.10.10.10 --syn --timing T2 --fragment
+
+# List presets
+osk nmap presets
+
+# List scan types
+osk nmap scans
+```
+
+## XSS Payload Generator
+
+```bash
+# Generate payloads for HTML attribute context
+osk xss gen --context html-attr --action alert
+
+# Generate with WAF bypass encoding
+osk xss gen --context js-string --waf cloudflare
+
+# Generate with blocked characters
+osk xss gen --context html-tag --block "<" --block ">"
+
+# Show polyglot payloads
+osk xss polyglots
+
+# List all contexts
+osk xss contexts
+```
 
 ## Requirements
 
@@ -149,6 +185,9 @@ osk hash list
 - [Reverse Shell Generator](https://offseckit.com/tools/revshell) — browser version
 - [Encoding Multi-Tool](https://offseckit.com/tools/encode) — browser version
 - [Hash Identifier](https://offseckit.com/tools/hash) — browser version
+- [JWT Decoder](https://offseckit.com/tools/jwt) — browser version
+- [Nmap Builder](https://offseckit.com/tools/nmap) — browser version
+- [XSS Generator](https://offseckit.com/tools/xss) — browser version
 
 ## License
 
