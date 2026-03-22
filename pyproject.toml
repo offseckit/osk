@@ -33,4 +33,4 @@ osk = "osk.cli:main"
 
 [project.urls]
 Homepage = "https://offseckit.com"
-Repository = "https://github.com/offseckit/cli"
+Repository = "https://github.com/offseckit/osk"

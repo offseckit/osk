@@ -13,8 +13,8 @@ pip install offseckit
 Or clone and install locally:
 
 ```bash
-git clone https://github.com/offseckit/cli.git
-cd cli
+git clone https://github.com/offseckit/osk.git
+cd osk
 pip install .
 ```
 
