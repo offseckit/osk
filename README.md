@@ -1,6 +1,6 @@
 # >_ osk
 
-**Free offensive security toolkit for your terminal — reverse shells, encoding, hashing, JWT analysis, nmap building, XSS payloads, and more.**
+**Free offensive security toolkit for your terminal — reverse shells, encoding, hashing, JWT analysis, nmap building, XSS payloads, header security analysis, and more.**
 
 Part of [OffSecKit](https://offseckit.com) — all tools also available as [browser tools](https://offseckit.com/tools).
 
@@ -38,6 +38,9 @@ osk nmap build -t 10.10.10.0/24 --syn --top-ports 1000
 
 # Generate XSS payloads
 osk xss gen --context html-attr --action alert
+
+# Analyze security headers
+curl -sI https://example.com | osk headers analyze
 ```
 
 ## Tools
@@ -50,6 +53,7 @@ osk xss gen --context html-attr --action alert
 | `osk jwt` | Decode and analyze JWT tokens for security issues |
 | `osk nmap` | Build nmap commands with scan types, scripts, timing, and evasion |
 | `osk xss` | Generate context-aware XSS payloads with WAF bypass and encoding |
+| `osk headers` | Analyze HTTP response headers for security misconfigurations |
 
 ## Reverse Shells
 
@@ -174,6 +178,25 @@ osk xss polyglots
 osk xss contexts
 ```
 
+## HTTP Header Security Analyzer
+
+```bash
+# Pipe headers from curl
+curl -sI https://example.com | osk headers analyze
+
+# Read from a file
+osk headers analyze -f response-headers.txt
+
+# Output as JSON for CI/CD
+curl -sI https://example.com | osk headers analyze --json
+
+# Redirect from stdin
+osk headers analyze < headers.txt
+
+# List all security headers checked
+osk headers list
+```
+
 ## Requirements
 
 - Python 3.8+
@@ -188,6 +211,7 @@ osk xss contexts
 - [JWT Decoder](https://offseckit.com/tools/jwt) — browser version
 - [Nmap Builder](https://offseckit.com/tools/nmap) — browser version
 - [XSS Generator](https://offseckit.com/tools/xss) — browser version
+- [Header Security Analyzer](https://offseckit.com/tools/headers) — browser version
 
 ## License
 

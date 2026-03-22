@@ -9,6 +9,7 @@ from .hash.cmd import hash
 from .jwt.cmd import jwt
 from .nmap.cmd import nmap
 from .xss.cmd import xss
+from .headers.cmd import headers
 
 BANNER = f"""\
 \033[32m>_\033[0m \033[1mosk\033[0m \033[90mv{__version__}\033[0m
@@ -29,6 +30,7 @@ def main():
       osk jwt        Decode and analyze JWT tokens
       osk nmap       Build nmap commands visually
       osk xss        Generate XSS payloads with WAF bypass
+      osk headers    Analyze HTTP response headers for security issues
 
     \b
     Examples:
@@ -41,6 +43,7 @@ def main():
       osk nmap build -t 10.10.10.10 -sV --open
       osk xss gen -c html -a alert
       osk xss gen -c attr-double --waf cloudflare
+      curl -sI https://example.com | osk headers analyze
 
     \b
     https://offseckit.com
@@ -53,6 +56,7 @@ main.add_command(hash)
 main.add_command(jwt)
 main.add_command(nmap)
 main.add_command(xss)
+main.add_command(headers)
 
 
 if __name__ == "__main__":
