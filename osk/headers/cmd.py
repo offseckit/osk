@@ -13,14 +13,13 @@ def headers(ctx):
     """Analyze HTTP response headers for security misconfigurations.
 
     \b
-    Paste headers from curl, Burp, or browser DevTools.
-    No network requests are made — all analysis is offline.
+    Paste headers, read from a file, or fetch directly from a URL.
 
     \b
     Examples:
+      osk headers analyze -u https://example.com
       curl -sI https://example.com | osk headers analyze
       osk headers analyze -f response.txt
-      osk headers analyze < headers.txt
       osk headers list
     """
     if ctx.invoked_subcommand is None:
@@ -28,32 +27,46 @@ def headers(ctx):
 
 
 @headers.command("analyze")
+@click.option("-u", "--url", default=None, help="Fetch headers from a URL")
 @click.option("-f", "--file", "file_path", default=None,
               type=click.Path(exists=True),
               help="Read headers from a file instead of stdin")
 @click.option("--json", "json_output", is_flag=True, default=False,
               help="Output results as JSON")
-def analyze_cmd(file_path, json_output):
+def analyze_cmd(url, file_path, json_output):
     """Analyze HTTP response headers for security issues.
 
     \b
-    Read headers from stdin (pipe), a file, or paste interactively.
+    Fetch from a URL, read from stdin/file, or pipe from curl.
 
     \b
     Examples:
+      osk headers analyze -u https://example.com
       curl -sI https://example.com | osk headers analyze
       osk headers analyze -f response-headers.txt
-      osk headers analyze --json < headers.txt
+      osk headers analyze --json -u https://example.com
     """
-    if file_path:
+    if url:
+        import urllib.request
+        import urllib.error
+        try:
+            req = urllib.request.Request(url, method="HEAD")
+            req.add_header("User-Agent", "osk/0.1.0")
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                raw = "\r\n".join(f"{k}: {v}" for k, v in resp.getheaders())
+        except urllib.error.URLError as e:
+            raise click.ClickException(f"Failed to fetch {url}: {e}")
+        except Exception as e:
+            raise click.ClickException(f"Failed to fetch {url}: {e}")
+    elif file_path:
         with open(file_path, "r", encoding="utf-8", errors="replace") as f:
             raw = f.read()
     elif not sys.stdin.isatty():
         raw = sys.stdin.read()
     else:
         raise click.ClickException(
-            "No input. Pipe headers via stdin or use -f to read from a file.\n"
-            "  Example: curl -sI https://example.com | osk headers analyze"
+            "No input. Use -u to fetch from a URL, pipe via stdin, or use -f for a file.\n"
+            "  Example: osk headers analyze -u https://example.com"
         )
 
     raw = raw.strip()

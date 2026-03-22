@@ -181,6 +181,9 @@ osk xss contexts
 ## HTTP Header Security Analyzer
 
 ```bash
+# Fetch headers directly from a URL
+osk headers analyze -u https://example.com
+
 # Pipe headers from curl
 curl -sI https://example.com | osk headers analyze
 
@@ -188,10 +191,7 @@ curl -sI https://example.com | osk headers analyze
 osk headers analyze -f response-headers.txt
 
 # Output as JSON for CI/CD
-curl -sI https://example.com | osk headers analyze --json
-
-# Redirect from stdin
-osk headers analyze < headers.txt
+osk headers analyze -u https://example.com --json
 
 # List all security headers checked
 osk headers list
