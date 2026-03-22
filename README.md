@@ -1,6 +1,6 @@
 # >_ osk
 
-**Free offensive security toolkit for your terminal — reverse shells, encoding, hashing, JWT analysis, nmap building, XSS payloads, header security analysis, CVSS scoring, and more.**
+**Free offensive security toolkit for your terminal — reverse shells, encoding, hashing, JWT analysis, nmap building, XSS payloads, header security analysis, CVSS scoring, subnet calculation, and more.**
 
 Part of [OffSecKit](https://offseckit.com) — all tools also available as [browser tools](https://offseckit.com/tools).
 
@@ -44,6 +44,9 @@ curl -sI https://example.com | osk headers analyze
 
 # Calculate a CVSS score
 osk cvss calc CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H
+
+# Calculate subnet details
+osk subnet calc 192.168.1.0/24
 ```
 
 ## Tools
@@ -58,6 +61,7 @@ osk cvss calc CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H
 | `osk xss` | Generate context-aware XSS payloads with WAF bypass and encoding |
 | `osk headers` | Analyze HTTP response headers for security misconfigurations |
 | `osk cvss` | Calculate CVSS 3.1 and 4.0 vulnerability scores |
+| `osk subnet` | Calculate subnet details, split networks, check IP containment |
 
 ## Reverse Shells
 
@@ -220,6 +224,25 @@ osk cvss presets
 osk cvss compare CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H CVSS:3.1/AV:N/AC:H/PR:L/UI:R/S:U/C:H/I:H/A:H
 ```
 
+## Subnet Calculator
+
+```bash
+# Calculate subnet details from CIDR
+osk subnet calc 192.168.1.0/24
+
+# Calculate with JSON output for scripting
+osk subnet calc 10.10.10.0/26 --json
+
+# Split a network into equal subnets
+osk subnet split 10.0.0.0/16 --into 4
+
+# Check if an IP is within a CIDR range
+osk subnet contains 192.168.1.0/24 192.168.1.100
+
+# List all usable hosts in a subnet
+osk subnet list 192.168.1.0/28
+```
+
 ## Requirements
 
 - Python 3.8+
@@ -235,6 +258,7 @@ osk cvss compare CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H CVSS:3.1/AV:N/AC:H
 - [XSS Generator](https://offseckit.com/tools/xss) — browser version
 - [Header Security Analyzer](https://offseckit.com/tools/headers) — browser version
 - [CVSS Calculator](https://offseckit.com/tools/cvss) — browser version
+- [Subnet Calculator](https://offseckit.com/tools/subnet) — browser version
 
 ## License
 

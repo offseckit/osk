@@ -11,6 +11,7 @@ from .nmap.cmd import nmap
 from .xss.cmd import xss
 from .headers.cmd import headers
 from .cvss.cmd import cvss
+from .subnet.cmd import subnet
 
 BANNER = f"""\
 \033[32m>_\033[0m \033[1mosk\033[0m \033[90mv{__version__}\033[0m
@@ -33,6 +34,7 @@ def main():
       osk xss        Generate XSS payloads with WAF bypass
       osk headers    Analyze HTTP response headers for security issues
       osk cvss       Calculate CVSS 3.1 and 4.0 vulnerability scores
+      osk subnet     Calculate subnet details from CIDR notation
 
     \b
     Examples:
@@ -48,6 +50,8 @@ def main():
       curl -sI https://example.com | osk headers analyze
       osk cvss calc CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H
       osk cvss presets
+      osk subnet calc 192.168.1.0/24
+      osk subnet split 10.0.0.0/16 --into 4
 
     \b
     https://offseckit.com
@@ -62,6 +66,7 @@ main.add_command(nmap)
 main.add_command(xss)
 main.add_command(headers)
 main.add_command(cvss)
+main.add_command(subnet)
 
 
 if __name__ == "__main__":
