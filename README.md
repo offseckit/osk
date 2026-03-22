@@ -200,7 +200,6 @@ osk headers list
 ## Requirements
 
 - Python 3.8+
-- click
 
 ## Related
 
