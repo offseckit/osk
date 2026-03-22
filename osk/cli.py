@@ -6,6 +6,7 @@ from . import __version__
 from .revshell.cmd import revshell
 from .encode.cmd import encode
 from .hash.cmd import hash
+from .jwt.cmd import jwt
 
 BANNER = f"""\
 \033[32m>_\033[0m \033[1mosk\033[0m \033[90mv{__version__}\033[0m
@@ -23,6 +24,7 @@ def main():
       osk revshell   Generate reverse shell one-liners
       osk encode     Encode and decode text (Base64, URL, Hex, ...)
       osk hash       Identify and generate hashes
+      osk jwt        Decode and analyze JWT tokens
 
     \b
     Examples:
@@ -30,6 +32,8 @@ def main():
       osk encode -o base64-encode "Hello World"
       osk hash id 5d41402abc4b2a76b9719d911017c592
       osk hash generate -a sha256 "password"
+      osk jwt decode eyJhbGciOiJIUzI1NiIs...
+      osk jwt analyze eyJhbGciOiJIUzI1NiIs...
 
     \b
     https://offseckit.com
@@ -39,6 +43,7 @@ def main():
 main.add_command(revshell)
 main.add_command(encode)
 main.add_command(hash)
+main.add_command(jwt)
 
 
 if __name__ == "__main__":
