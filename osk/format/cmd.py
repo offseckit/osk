@@ -36,9 +36,11 @@ def format(ctx):
               help="Window title (default: Terminal)")
 @click.option("-n", "--line-numbers", is_flag=True, default=False,
               help="Show line numbers")
+@click.option("-w", "--width", default=0, type=int,
+              help="Fixed width in characters (0 = auto-fit content)")
 @click.option("--theme", type=click.Choice(["dracula", "monokai"]),
               default="dracula", help="Color theme")
-def render_cmd(text, file_path, title, line_numbers, theme):
+def render_cmd(text, file_path, title, line_numbers, width, theme):
     """Render terminal output with a styled window frame.
 
     \b
@@ -61,7 +63,7 @@ def render_cmd(text, file_path, title, line_numbers, theme):
         )
 
     result = format_output(content, title=title, line_numbers=line_numbers,
-                           theme_name=theme)
+                           theme_name=theme, width=width)
     click.echo(result)
 
 

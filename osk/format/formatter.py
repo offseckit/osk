@@ -119,10 +119,11 @@ def read_input(text=None, file_path=None):
     return None
 
 
-def format_output(text, title=None, line_numbers=False, theme_name="dracula"):
+def format_output(text, title=None, line_numbers=False, theme_name="dracula", width=0):
     """Format terminal output with a styled terminal frame.
 
     Returns formatted string for terminal display.
+    width: fixed width in characters (0 = auto-fit content).
     """
     text = unescape_ansi(text)
     lines = text.rstrip("\n").split("\n")
@@ -130,6 +131,8 @@ def format_output(text, title=None, line_numbers=False, theme_name="dracula"):
     # Terminal frame
     max_width = max(len(strip_ansi(line)) for line in lines) if lines else 0
     max_width = max(max_width, 40)  # Minimum width
+    if width > 0:
+        max_width = max(width, 40)
 
     frame_width = max_width + 4  # padding
 
