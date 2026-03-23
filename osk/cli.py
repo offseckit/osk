@@ -13,6 +13,7 @@ from .headers.cmd import headers
 from .cvss.cmd import cvss
 from .subnet.cmd import subnet
 from .format.cmd import format
+from .sqli.cmd import sqli
 
 BANNER = f"""\
 \033[32m>_\033[0m \033[1mosk\033[0m \033[90mv{__version__}\033[0m
@@ -36,6 +37,7 @@ def main():
       osk headers    Analyze HTTP response headers for security issues
       osk cvss       Calculate CVSS 3.1 and 4.0 vulnerability scores
       osk subnet     Calculate subnet details from CIDR notation
+      osk sqli       Generate SQL injection payloads
       osk format     Format and beautify terminal output
 
     \b
@@ -54,6 +56,9 @@ def main():
       osk cvss presets
       osk subnet calc 192.168.1.0/24
       osk subnet split 10.0.0.0/16 --into 4
+      osk sqli gen -d mysql -t union -c 3
+      osk sqli gen -d mssql -t error-based
+      osk sqli auth
       nmap -sV 10.10.10.10 | osk format render
 
     \b
@@ -70,6 +75,7 @@ main.add_command(xss)
 main.add_command(headers)
 main.add_command(cvss)
 main.add_command(subnet)
+main.add_command(sqli)
 main.add_command(format)
 
 

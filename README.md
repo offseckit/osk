@@ -1,6 +1,6 @@
 # >_ osk
 
-**Free offensive security toolkit for your terminal — reverse shells, encoding, hashing, JWT analysis, nmap building, XSS payloads, header security analysis, CVSS scoring, subnet calculation, terminal output formatting, and more.**
+**Free offensive security toolkit for your terminal — reverse shells, encoding, hashing, JWT analysis, nmap building, XSS payloads, SQLi payloads, header security analysis, CVSS scoring, subnet calculation, terminal output formatting, and more.**
 
 Part of [OffSecKit](https://offseckit.com) — all tools also available as [browser tools](https://offseckit.com/tools).
 
@@ -39,6 +39,9 @@ osk nmap build -t 10.10.10.0/24 --syn --top-ports 1000
 # Generate XSS payloads
 osk xss gen --context html-attr --action alert
 
+# Generate SQLi payloads
+osk sqli gen -d mysql -t union -c 3
+
 # Analyze security headers
 curl -sI https://example.com | osk headers analyze
 
@@ -62,6 +65,7 @@ nmap -sV 10.10.10.10 | osk format render
 | `osk jwt` | Decode and analyze JWT tokens for security issues |
 | `osk nmap` | Build nmap commands with scan types, scripts, timing, and evasion |
 | `osk xss` | Generate context-aware XSS payloads with WAF bypass and encoding |
+| `osk sqli` | Generate SQL injection payloads for MySQL, MSSQL, PostgreSQL, Oracle, SQLite |
 | `osk headers` | Analyze HTTP response headers for security misconfigurations |
 | `osk cvss` | Calculate CVSS 3.1 and 4.0 vulnerability scores |
 | `osk subnet` | Calculate subnet details, split networks, check IP containment |
@@ -190,6 +194,28 @@ osk xss polyglots
 osk xss contexts
 ```
 
+## SQL Injection Payload Generator
+
+```bash
+# Generate UNION-based payloads for MySQL
+osk sqli gen -d mysql -t union -c 3
+
+# Generate error-based payloads for MSSQL
+osk sqli gen -d mssql -t error-based
+
+# Generate time-blind payloads for PostgreSQL
+osk sqli gen -d postgresql -t time-blind
+
+# Generate with WAF bypass (case swap)
+osk sqli gen -d mysql -t union --waf case-swap
+
+# Show authentication bypass payloads
+osk sqli auth
+
+# List supported databases
+osk sqli dbs
+```
+
 ## HTTP Header Security Analyzer
 
 ```bash
@@ -282,6 +308,7 @@ cat output.log | osk format stats --json
 - [Header Security Analyzer](https://offseckit.com/tools/headers) — browser version
 - [CVSS Calculator](https://offseckit.com/tools/cvss) — browser version
 - [Subnet Calculator](https://offseckit.com/tools/subnet) — browser version
+- [SQLi Payload Generator](https://offseckit.com/tools/sqli) — browser version
 - [CLI Output Formatter](https://offseckit.com/tools/cli-format) — browser version
 
 ## License
