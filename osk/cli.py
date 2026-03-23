@@ -14,6 +14,7 @@ from .cvss.cmd import cvss
 from .subnet.cmd import subnet
 from .format.cmd import format
 from .sqli.cmd import sqli
+from .wordlist.cmd import wordlist
 
 BANNER = f"""\
 \033[32m>_\033[0m \033[1mosk\033[0m \033[90mv{__version__}\033[0m
@@ -39,6 +40,7 @@ def main():
       osk subnet     Calculate subnet details from CIDR notation
       osk sqli       Generate SQL injection payloads
       osk format     Format and beautify terminal output
+      osk wordlist   Generate custom wordlists with password mutations
 
     \b
     Examples:
@@ -59,6 +61,7 @@ def main():
       osk sqli gen -d mysql -t union -c 3
       osk sqli gen -d mssql -t error-based
       osk sqli auth
+      osk wordlist gen password admin --leet --numbers
       nmap -sV 10.10.10.10 | osk format render
 
     \b
@@ -77,6 +80,7 @@ main.add_command(cvss)
 main.add_command(subnet)
 main.add_command(sqli)
 main.add_command(format)
+main.add_command(wordlist)
 
 
 if __name__ == "__main__":

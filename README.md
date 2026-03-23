@@ -1,6 +1,6 @@
 # >_ osk
 
-**Free offensive security toolkit for your terminal — reverse shells, encoding, hashing, JWT analysis, nmap building, XSS payloads, SQLi payloads, header security analysis, CVSS scoring, subnet calculation, terminal output formatting, and more.**
+**Free offensive security toolkit for your terminal — reverse shells, encoding, hashing, JWT analysis, nmap building, XSS payloads, SQLi payloads, header security analysis, CVSS scoring, subnet calculation, terminal output formatting, wordlist generation, and more.**
 
 Part of [OffSecKit](https://offseckit.com) — all tools also available as [browser tools](https://offseckit.com/tools).
 
@@ -51,6 +51,9 @@ osk cvss calc CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H
 # Calculate subnet details
 osk subnet calc 192.168.1.0/24
 
+# Generate a wordlist with mutations
+osk wordlist gen password admin --leet --numbers
+
 # Format terminal output with a styled frame
 nmap -sV 10.10.10.10 | osk format render
 ```
@@ -70,6 +73,7 @@ nmap -sV 10.10.10.10 | osk format render
 | `osk cvss` | Calculate CVSS 3.1 and 4.0 vulnerability scores |
 | `osk subnet` | Calculate subnet details, split networks, check IP containment |
 | `osk format` | Format and beautify terminal output with styled window frames |
+| `osk wordlist` | Generate custom wordlists with leet speak, case mutations, and password patterns |
 
 ## Reverse Shells
 
@@ -292,6 +296,31 @@ cat colored-output.log | osk format strip
 cat output.log | osk format stats --json
 ```
 
+## Wordlist Generator
+
+```bash
+# Generate wordlist from base words with case variations
+osk wordlist gen password admin
+
+# Enable leet speak mutations
+osk wordlist gen password --leet
+
+# Append numbers (0-9) and symbols
+osk wordlist gen company --numbers --symbols
+
+# Full mutation suite and save to file
+osk wordlist gen company admin john -o wordlist.txt --case --leet --numbers --symbols --suffixes
+
+# Read base words from a file
+osk wordlist gen -f base_words.txt --leet --numbers
+
+# Append years instead of single digits
+osk wordlist gen company --numbers --number-range years --year-start 2020 --year-end 2026
+
+# Show leet speak mappings
+osk wordlist leet
+```
+
 ## Requirements
 
 - Python 3.8+
@@ -310,6 +339,7 @@ cat output.log | osk format stats --json
 - [Subnet Calculator](https://offseckit.com/tools/subnet) — browser version
 - [SQLi Payload Generator](https://offseckit.com/tools/sqli) — browser version
 - [CLI Output Formatter](https://offseckit.com/tools/cli-format) — browser version
+- [Wordlist Generator](https://offseckit.com/tools/wordlist) — browser version
 
 ## License
 
