@@ -4,7 +4,7 @@ import sys
 
 import click
 
-from .encoders import OPERATIONS, list_operations, run_chain, run_operation
+from .encoders import OPERATIONS, detect_encoding, list_operations, run_chain, run_operation
 
 
 @click.group(invoke_without_command=True)
@@ -86,3 +86,47 @@ def list_cmd(category):
             current_cat = cat
         click.secho(f"  {op['id']}", fg="cyan", nl=False)
         click.secho(f"  {op['name']}", fg="bright_black")
+
+
+@encode.command("detect")
+@click.option("-i", "--input", "input_text", default=None, help="Input text (reads stdin if omitted)")
+@click.argument("text", nargs=-1)
+def detect_cmd(input_text, text):
+    """Analyze input and suggest what encoding it might be.
+
+    \b
+    Examples:
+      osk encode detect "SGVsbG8gV29ybGQ="
+      osk encode detect "%48%65%6C%6C%6F"
+      echo "01001000 01101001" | osk encode detect
+      osk encode detect "xn--n3h.com"
+    """
+    if input_text is not None:
+        data = input_text
+    elif text:
+        data = " ".join(text)
+    elif not sys.stdin.isatty():
+        data = sys.stdin.read().rstrip("\n")
+    else:
+        raise click.ClickException("No input provided. Pass text as an argument, use -i, or pipe via stdin.")
+
+    results = detect_encoding(data)
+
+    if not results:
+        click.secho("No encoding patterns detected.", fg="bright_black")
+        return
+
+    click.secho("# Detected Encodings", fg="bright_magenta")
+    click.echo()
+
+    confidence_colors = {"high": "green", "medium": "yellow", "low": "bright_black"}
+
+    for r in results:
+        color = confidence_colors.get(r["confidence"], "white")
+        click.secho(f"  [{r['confidence']}]", fg=color, nl=False)
+        click.secho(f"  {r['id']}", fg="cyan", nl=False)
+        click.secho(f"  {r['name']}", fg="bright_black")
+
+    click.echo()
+    click.secho("Tip: ", fg="bright_black", nl=False)
+    click.secho(f"osk encode -o {results[0]['id']} \"your input\"", fg="cyan")

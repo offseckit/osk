@@ -3,6 +3,7 @@
 import base64
 import codecs
 import html
+import re
 from urllib.parse import quote, unquote
 
 
@@ -112,6 +113,100 @@ def octal_decode(data: str) -> str:
     return bytes(int(b, 8) for b in parts).decode("utf-8")
 
 
+def base64url_encode(data: str) -> str:
+    """Encode text to URL-safe Base64 (used in JWTs)."""
+    return base64.urlsafe_b64encode(data.encode("utf-8")).rstrip(b"=").decode("ascii")
+
+
+def base64url_decode(data: str) -> str:
+    """Decode URL-safe Base64 to text."""
+    s = data.strip()
+    # Add back padding
+    s += "=" * (4 - len(s) % 4) if len(s) % 4 else ""
+    return base64.urlsafe_b64decode(s).decode("utf-8")
+
+
+def base32_encode(data: str) -> str:
+    """Encode text to Base32 (used in TOTP, DNS tunneling)."""
+    return base64.b32encode(data.encode("utf-8")).decode("ascii")
+
+
+def base32_decode(data: str) -> str:
+    """Decode Base32 to text."""
+    s = data.strip().upper()
+    # Add back padding if needed
+    while len(s) % 8:
+        s += "="
+    return base64.b32decode(s).decode("utf-8")
+
+
+def base58_encode(data: str) -> str:
+    """Encode text to Base58 (used in Bitcoin, IPFS)."""
+    alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
+    raw = data.encode("utf-8")
+    num = int.from_bytes(raw, "big") if raw else 0
+    result = ""
+    while num > 0:
+        num, remainder = divmod(num, 58)
+        result = alphabet[remainder] + result
+    # Preserve leading zero bytes
+    for byte in raw:
+        if byte == 0:
+            result = "1" + result
+        else:
+            break
+    return result or "1"
+
+
+def base58_decode(data: str) -> str:
+    """Decode Base58 to text."""
+    alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
+    s = data.strip()
+    num = 0
+    for c in s:
+        idx = alphabet.index(c)
+        if idx < 0:
+            raise ValueError(f"Invalid Base58 character: {c}")
+        num = num * 58 + idx
+    # Count leading '1's (zero bytes)
+    leading_zeros = 0
+    for c in s:
+        if c == "1":
+            leading_zeros += 1
+        else:
+            break
+    if num == 0:
+        raw = b""
+    else:
+        hex_str = format(num, "x")
+        if len(hex_str) % 2:
+            hex_str = "0" + hex_str
+        raw = bytes.fromhex(hex_str)
+    return (b"\x00" * leading_zeros + raw).decode("utf-8")
+
+
+def punycode_encode(data: str) -> str:
+    """Encode domain to Punycode (IDN homograph attack analysis)."""
+    return data.encode("idna").decode("ascii")
+
+
+def punycode_decode(data: str) -> str:
+    """Decode Punycode to Unicode domain."""
+    return data.strip().encode("ascii").decode("idna")
+
+
+def rot47(data: str) -> str:
+    """Rotate printable ASCII characters by 47 positions."""
+    result = []
+    for c in data:
+        code = ord(c)
+        if 33 <= code <= 126:
+            result.append(chr(((code - 33 + 47) % 94) + 33))
+        else:
+            result.append(c)
+    return "".join(result)
+
+
 def rot13(data: str) -> str:
     """Rotate letters by 13 positions."""
     return codecs.decode(data, "rot_13")
@@ -135,6 +230,12 @@ def to_lowercase(data: str) -> str:
 OPERATIONS = {
     "base64-encode": {"name": "Base64 Encode", "fn": base64_encode, "category": "encode"},
     "base64-decode": {"name": "Base64 Decode", "fn": base64_decode, "category": "decode"},
+    "base64url-encode": {"name": "Base64url Encode", "fn": base64url_encode, "category": "encode"},
+    "base64url-decode": {"name": "Base64url Decode", "fn": base64url_decode, "category": "decode"},
+    "base32-encode": {"name": "Base32 Encode", "fn": base32_encode, "category": "encode"},
+    "base32-decode": {"name": "Base32 Decode", "fn": base32_decode, "category": "decode"},
+    "base58-encode": {"name": "Base58 Encode", "fn": base58_encode, "category": "encode"},
+    "base58-decode": {"name": "Base58 Decode", "fn": base58_decode, "category": "decode"},
     "url-encode": {"name": "URL Encode", "fn": url_encode, "category": "encode"},
     "url-decode": {"name": "URL Decode", "fn": url_decode, "category": "decode"},
     "url-encode-full": {"name": "URL Encode (Full)", "fn": url_encode_full, "category": "encode"},
@@ -146,6 +247,8 @@ OPERATIONS = {
     "html-encode-all": {"name": "HTML Entity Encode (All)", "fn": html_encode_all, "category": "encode"},
     "unicode-escape": {"name": "Unicode Escape", "fn": unicode_escape, "category": "encode"},
     "unicode-unescape": {"name": "Unicode Unescape", "fn": unicode_unescape, "category": "decode"},
+    "punycode-encode": {"name": "Punycode Encode", "fn": punycode_encode, "category": "encode"},
+    "punycode-decode": {"name": "Punycode Decode", "fn": punycode_decode, "category": "decode"},
     "binary-encode": {"name": "Binary Encode", "fn": binary_encode, "category": "encode"},
     "binary-decode": {"name": "Binary Decode", "fn": binary_decode, "category": "decode"},
     "decimal-encode": {"name": "Decimal Encode", "fn": decimal_encode, "category": "encode"},
@@ -153,6 +256,7 @@ OPERATIONS = {
     "octal-encode": {"name": "Octal Encode", "fn": octal_encode, "category": "encode"},
     "octal-decode": {"name": "Octal Decode", "fn": octal_decode, "category": "decode"},
     "rot13": {"name": "ROT13", "fn": rot13, "category": "encode"},
+    "rot47": {"name": "ROT47", "fn": rot47, "category": "encode"},
     "reverse": {"name": "Reverse String", "fn": reverse_str, "category": "encode"},
     "uppercase": {"name": "Uppercase", "fn": to_uppercase, "category": "encode"},
     "lowercase": {"name": "Lowercase", "fn": to_lowercase, "category": "encode"},
@@ -182,3 +286,90 @@ def list_operations() -> list:
         {"id": op_id, "name": op["name"], "category": op["category"]}
         for op_id, op in OPERATIONS.items()
     ]
+
+
+def detect_encoding(data: str) -> list:
+    """Analyze input and suggest what encoding(s) it might be."""
+    results = []
+    trimmed = data.strip()
+    if not trimmed:
+        return results
+
+    # Base64: valid chars, length divisible by 4 (with padding)
+    if re.match(r"^[A-Za-z0-9+/]+=*$", trimmed) and len(trimmed) >= 4:
+        try:
+            base64.b64decode(trimmed)
+            confidence = "high" if len(trimmed) % 4 == 0 else "medium"
+            results.append({"id": "base64-decode", "name": "Base64 Decode", "confidence": confidence})
+        except Exception:
+            pass
+
+    # Base64url: valid chars with - and _ instead of + and /
+    if re.match(r"^[A-Za-z0-9_-]+$", trimmed) and len(trimmed) >= 4 and ("-" in trimmed or "_" in trimmed):
+        try:
+            s = trimmed + "=" * (4 - len(trimmed) % 4) if len(trimmed) % 4 else trimmed
+            base64.urlsafe_b64decode(s)
+            results.append({"id": "base64url-decode", "name": "Base64url Decode", "confidence": "medium"})
+        except Exception:
+            pass
+
+    # URL-encoded: contains %XX patterns
+    pct_matches = re.findall(r"%[0-9A-Fa-f]{2}", trimmed)
+    if pct_matches:
+        confidence = "high" if len(pct_matches) > 3 else "medium"
+        results.append({"id": "url-decode", "name": "URL Decode", "confidence": confidence})
+
+    # Hex: only hex chars, even length
+    hex_clean = re.sub(r"[\s:,]", "", trimmed).replace("0x", "")
+    if re.match(r"^[0-9A-Fa-f]+$", hex_clean) and len(hex_clean) >= 4 and len(hex_clean) % 2 == 0:
+        confidence = "medium" if len(trimmed) > 8 else "low"
+        results.append({"id": "hex-decode", "name": "Hex Decode", "confidence": confidence})
+
+    # Hex with \x prefix
+    if re.search(r"\\x[0-9A-Fa-f]{2}", trimmed):
+        results.append({"id": "hex-decode", "name": "Hex Decode (\\x prefixed)", "confidence": "high"})
+
+    # HTML entities
+    if re.search(r"&(?:#\d+|#x[0-9a-fA-F]+|[a-zA-Z]+);", trimmed):
+        entity_count = len(re.findall(r"&(?:#\d+|#x[0-9a-fA-F]+|[a-zA-Z]+);", trimmed))
+        confidence = "high" if entity_count > 2 else "medium"
+        results.append({"id": "html-decode", "name": "HTML Entity Decode", "confidence": confidence})
+
+    # Unicode escape
+    if re.search(r"\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}", trimmed):
+        results.append({"id": "unicode-unescape", "name": "Unicode Unescape", "confidence": "high"})
+
+    # Binary: 8-bit groups of 0s and 1s
+    if re.match(r"^[01]{8}(\s+[01]{8})*$", trimmed):
+        results.append({"id": "binary-decode", "name": "Binary Decode", "confidence": "high"})
+
+    # Decimal: space/comma-separated numbers 0-255
+    dec_parts = re.split(r"[\s,]+", trimmed)
+    if len(dec_parts) >= 2 and all(
+        re.match(r"^\d+$", p) and 0 <= int(p) <= 255 for p in dec_parts
+    ):
+        results.append({"id": "decimal-decode", "name": "Decimal (ASCII) Decode", "confidence": "medium"})
+
+    # Octal: space-separated 3-digit octal values
+    if re.match(r"^[0-7]{3}(\s+[0-7]{3})*$", trimmed):
+        results.append({"id": "octal-decode", "name": "Octal Decode", "confidence": "medium"})
+
+    # Base32: only A-Z2-7 with optional = padding
+    if re.match(r"^[A-Z2-7]+=*$", trimmed.upper()) and len(trimmed) >= 4:
+        if re.search(r"[2-7]", trimmed) or trimmed.endswith("="):
+            confidence = "high" if trimmed.endswith("=") else "low"
+            results.append({"id": "base32-decode", "name": "Base32 Decode", "confidence": confidence})
+
+    # Base58: only Base58 alphabet chars
+    if re.match(r"^[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]+$", trimmed) and len(trimmed) >= 20:
+        results.append({"id": "base58-decode", "name": "Base58 Decode", "confidence": "low"})
+
+    # Punycode: xn-- prefix
+    if re.search(r"xn--", trimmed, re.IGNORECASE):
+        results.append({"id": "punycode-decode", "name": "Punycode Decode", "confidence": "high"})
+
+    # ROT13: only letters and common punctuation
+    if re.match(r"^[a-zA-Z\s.,!?;:\'\"()-]+$", trimmed) and len(trimmed) >= 4:
+        results.append({"id": "rot13", "name": "ROT13", "confidence": "low"})
+
+    return results
