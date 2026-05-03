@@ -1,6 +1,6 @@
 # >_ osk
 
-**Free offensive security toolkit for your terminal — reverse shells, encoding, hashing, JWT analysis, nmap building, XSS payloads, SQLi payloads, header security analysis, CVSS scoring, subnet calculation, terminal output formatting, wordlist generation, and more.**
+**Free offensive security toolkit for your terminal — reverse shells, encoding, hashing, JWT analysis, nmap building, XSS payloads, SQLi payloads, header security analysis, CVSS scoring, subnet calculation, terminal output formatting, wordlist generation, chmod permissions calculator, and more.**
 
 Part of [OffSecKit](https://offseckit.com) — all tools also available as [browser tools](https://offseckit.com/tools).
 
@@ -54,6 +54,9 @@ osk subnet calc 192.168.1.0/24
 # Generate a wordlist with mutations
 osk wordlist gen password admin --leet --numbers
 
+# Convert and explain a chmod mode
+osk chmod 4755 --explain
+
 # Format terminal output with a styled frame
 nmap -sV 10.10.10.10 | osk format render
 ```
@@ -74,6 +77,7 @@ nmap -sV 10.10.10.10 | osk format render
 | `osk subnet` | Calculate subnet details, split networks, check IP containment |
 | `osk format` | Format and beautify terminal output with styled window frames |
 | `osk wordlist` | Generate custom wordlists with leet speak, case mutations, and password patterns |
+| `osk chmod` | Convert and explain Linux file permissions, list common presets, hunt for setuid binaries |
 
 ## Reverse Shells
 
@@ -321,6 +325,33 @@ osk wordlist gen company --numbers --number-range years --year-start 2020 --year
 osk wordlist leet
 ```
 
+## Chmod / Permissions Calculator
+
+```bash
+# Convert octal to symbolic and back
+osk chmod 755
+osk chmod rwxr-xr-x
+
+# Explain a setuid binary's mode bit-by-bit
+osk chmod 4755 --explain
+
+# Apply POSIX symbolic notation against a base mode
+osk chmod 644 --apply u+x
+osk chmod 755 --apply go-w
+
+# Detect risky permissions only
+osk chmod 777 --warnings
+
+# Output JSON for scripting
+osk chmod 4755 --json
+
+# List common permission presets (755, 644, 600, 1777, 4755, ...)
+osk chmod presets
+
+# Print find(1) recipes for privesc hunting
+osk chmod hunt
+```
+
 ## Requirements
 
 - Python 3.8+
@@ -340,6 +371,7 @@ osk wordlist leet
 - [SQLi Payload Generator](https://offseckit.com/tools/sqli) — browser version
 - [CLI Output Formatter](https://offseckit.com/tools/cli-format) — browser version
 - [Wordlist Generator](https://offseckit.com/tools/wordlist) — browser version
+- [Chmod Calculator](https://offseckit.com/tools/chmod) — browser version
 
 ## License
 
